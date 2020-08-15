@@ -1,3 +1,15 @@
-# random_draw
+# umi project
 
-基于web对抽签程序， 可配置必中和随机中
+## Getting Started
+
+Install dependencies,
+
+```bash
+$ yarn
+```
+
+Start the dev server,
+
+```bash
+$ yarn start
+```
