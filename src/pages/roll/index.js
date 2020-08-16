@@ -1,9 +1,8 @@
 import React from 'react';
 import { Button, Divider, Select, Row } from 'antd';
-import { connect } from 'umi';
 import styles from './index.css';
 
-class Roll extends React.Component {
+export default class Roll extends React.Component {
   state = {
     org: {},
     selected: [],
@@ -14,7 +13,7 @@ class Roll extends React.Component {
 
   handleOrgChange = org => {
     console.log(org);
-    const orgs = this.props.data;
+    const orgs = JSON.parse(localStorage.getItem('draw_data'));
     let i;
     for (i = 0; i < orgs.length; i++) {
       if (org == orgs[i].orgName) {
@@ -63,22 +62,24 @@ class Roll extends React.Component {
   };
 
   render() {
-    console.log('props in roll', this.state);
+    const title = localStorage.getItem('draw_title');
+    const data = JSON.parse(localStorage.getItem('draw_data'));
+
     return (
       <div className={styles.roll}>
         <Row justify={'center'}>
-          <h3>{this.props.title}</h3>
+          <h3>{title}</h3>
         </Row>
         <div style={{ height: '24px' }}></div>
         <Row justify="center">
           <div>
-            {this.props.data && this.props.data.length && (
+            {data && data.length && (
               <Select
                 style={{ width: 200 }}
                 placeholder="选择单位"
                 onChange={this.handleOrgChange}
               >
-                {this.props.data.map(org => (
+                {data.map(org => (
                   <Select.Option value={org.orgName} key={org.orgName}>
                     {org.orgName}
                   </Select.Option>
@@ -127,9 +128,3 @@ class Roll extends React.Component {
     );
   }
 }
-
-function mapStateToProps(state) {
-  return { data: state.roll.data, title: state.roll.title };
-}
-
-export default connect(mapStateToProps)(Roll);

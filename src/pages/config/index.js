@@ -1,19 +1,33 @@
 import React from 'react';
 import { Button, Input, Select, Row, Form, Divider } from 'antd';
-import { connect } from 'umi';
 import styles from './index.css';
 import { history } from 'umi';
 
-class Config extends React.Component {
+export default class Config extends React.Component {
   state = {
     data: [],
     orgName: '',
     staff: '',
     targetStaff: '',
+    title: '',
+  };
+
+  componentDidMount() {
+    let d = JSON.parse(localStorage.getItem('draw_data'));
+    if (d) {
+      this.setState({
+        data: d,
+      });
+    }
+  }
+
+  handleTitleChange = e => {
+    this.setState({
+      title: e.target.value,
+    });
   };
 
   handleOrgNameChange = e => {
-    console.log(e.target.value);
     this.setState({
       orgName: e.target.value,
     });
@@ -38,7 +52,6 @@ class Config extends React.Component {
     if (staffStr && staffStr.length) {
       ss = staffStr.split(',').map(s => s.trim());
     }
-    console.log(ss);
     let tgs = [];
     if (this.state.targetStaff.length) {
       tgs = [this.state.targetStaff];
@@ -58,16 +71,24 @@ class Config extends React.Component {
 
   startRoll = () => {
     const { dispatch } = this.props;
-    dispatch({
-      type: 'roll/config',
-      payload: this.state.data,
-    }).then(() => {
-      history.push('/roll');
+    localStorage.setItem('draw_data', JSON.stringify(this.state.data));
+    localStorage.setItem('draw_title', JSON.stringify(this.state.title));
+    history.push('/roll');
+  };
+
+  handleDelete = org => {
+    console.log(org);
+    const { data } = this.state;
+    const newData = data.filter(o => {
+      return o.orgName != org.orgName;
+    });
+
+    this.setState({
+      data: newData,
     });
   };
 
   render() {
-    console.log('------------', this.state);
     const layout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 16 },
@@ -78,6 +99,13 @@ class Config extends React.Component {
     return (
       <div className={styles.main}>
         <Form {...layout} name="basic">
+          <Form.Item
+            label="活动标题"
+            name="title"
+            rules={[{ required: true, message: '输入活动标题' }]}
+          >
+            <Input placeholder="标题" onChange={this.handleTitleChange} />
+          </Form.Item>
           <Form.Item
             label="单位名"
             name="orgName"
@@ -116,13 +144,28 @@ class Config extends React.Component {
           </Row>
         </Form>
         <Divider></Divider>
+        <div>
+          {this.state.data.map(org => {
+            return (
+              <div key={org.orgName}>
+                <Row justify="space-between" align="middle">
+                  <span>{org.orgName}</span>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      this.handleDelete(org);
+                    }}
+                  >
+                    删除
+                  </Button>
+                </Row>
+                <p>{JSON.stringify(org.staff)}</p>
+                <p>{JSON.stringify(org.targets)}</p>
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
   }
 }
-
-function mapStateToProps(state) {
-  return { data: state.roll.data, title: state.roll.title };
-}
-
-export default connect(mapStateToProps)(Config);
