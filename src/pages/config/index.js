@@ -39,22 +39,22 @@ export default class Config extends React.Component {
     });
   };
 
-  handleTargetStaffChange = e => {
-    this.setState({
-      targetStaff: e.target.value,
-    });
-  };
-
   handleSubmit = () => {
     const { data } = this.state;
     const staffStr = this.state.staff;
     var ss = [];
-    if (staffStr && staffStr.length) {
-      ss = staffStr.split(',').map(s => s.trim());
-    }
     let tgs = [];
-    if (this.state.targetStaff.length) {
-      tgs = [this.state.targetStaff];
+    if (staffStr && staffStr.length) {
+      ss = staffStr.split(',').map(s => {
+        console.log(s);
+        let ts = s.trim();
+        if (ts[0] === '"') {
+          tgs.push(ts.substr(1, ts.length - 2));
+          return ts.substr(1, ts.length - 2);
+        } else {
+          return ts;
+        }
+      });
     }
 
     let org = {
@@ -126,13 +126,6 @@ export default class Config extends React.Component {
             />
           </Form.Item>
 
-          <Form.Item label="内定人选" name="targetStaff">
-            <Input
-              type="text"
-              placeholder={'填写人名， 多人用逗号隔开'}
-              onChange={this.handleTargetStaffChange}
-            />
-          </Form.Item>
           <Row>
             <Button type="primary" onClick={this.handleSubmit}>
               添加
@@ -160,7 +153,7 @@ export default class Config extends React.Component {
                   </Button>
                 </Row>
                 <p>{JSON.stringify(org.staff)}</p>
-                <p>{JSON.stringify(org.targets)}</p>
+                {/* <p>{JSON.stringify(org.targets)}</p> */}
               </div>
             );
           })}

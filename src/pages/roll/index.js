@@ -124,6 +124,11 @@ export default class Roll extends React.Component {
               ))}
           </div>
         </Row>
+        <div style={{ height: '48px' }}></div>
+        <Row justify="center">
+          <span>候选： </span>
+          <span>{JSON.stringify(this.state.org.staff)}</span>
+        </Row>
       </div>
     );
   }

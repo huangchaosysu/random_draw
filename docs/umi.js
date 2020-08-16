@@ -3751,16 +3751,21 @@
           (this.handleStaffChange = e => {
             this.setState({ staff: e.target.value });
           }),
-          (this.handleTargetStaffChange = e => {
-            this.setState({ targetStaff: e.target.value });
-          }),
           (this.handleSubmit = () => {
             var e = this.state.data,
               t = this.state.staff,
-              n = [];
-            t && t.length && (n = t.split(',').map(e => e.trim()));
-            var r = [];
-            this.state.targetStaff.length && (r = [this.state.targetStaff]);
+              n = [],
+              r = [];
+            t &&
+              t.length &&
+              (n = t.split(',').map(e => {
+                console.log(e);
+                var t = e.trim();
+                return '"' === t[0]
+                  ? (r.push(t.substr(1, t.length - 2)),
+                    t.substr(1, t.length - 2))
+                  : t;
+              }));
             var o = { orgName: this.state.orgName, staff: n, targets: r },
               i = e.concat([o]);
             this.setState({ data: i });
@@ -3844,16 +3849,6 @@
               }),
             ),
             c.a.createElement(
-              On.Item,
-              { label: '\u5185\u5b9a\u4eba\u9009', name: 'targetStaff' },
-              c.a.createElement(xn['a'], {
-                type: 'text',
-                placeholder:
-                  '\u586b\u5199\u4eba\u540d\uff0c \u591a\u4eba\u7528\u9017\u53f7\u9694\u5f00',
-                onChange: this.handleTargetStaffChange,
-              }),
-            ),
-            c.a.createElement(
               m['a'],
               null,
               c.a.createElement(
@@ -3893,7 +3888,6 @@
                   ),
                 ),
                 c.a.createElement('p', null, JSON.stringify(e.staff)),
-                c.a.createElement('p', null, JSON.stringify(e.targets)),
               ),
             ),
           ),
@@ -14294,6 +14288,17 @@
                     y.a.createElement('span', null, e),
                   ),
                 ),
+            ),
+          ),
+          y.a.createElement('div', { style: { height: '48px' } }),
+          y.a.createElement(
+            $o['a'],
+            { justify: 'center' },
+            y.a.createElement('span', null, '\u5019\u9009\uff1a '),
+            y.a.createElement(
+              'span',
+              null,
+              JSON.stringify(this.state.org.staff),
             ),
           ),
         );
